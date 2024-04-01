@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace FileSystemNTFS.BL
+namespace FileSystemNTFS.BL.Models
 {
     /// <summary>
     /// Права доступа для U-user(владельца файла)
@@ -11,8 +11,11 @@ namespace FileSystemNTFS.BL
     [DataContract]
     public class UsersAccessFlags
     {
+        [DataMember]
         public AttributeFlags U { get; set; }
+        [DataMember]
         public AttributeFlags G { get; set; }
+        [DataMember]
         public AttributeFlags O { get; set; }
 
         [JsonConstructor]

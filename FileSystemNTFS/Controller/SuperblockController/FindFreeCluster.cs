@@ -12,7 +12,7 @@ namespace FileSystemNTFS.BL.Controller.SuperblockController
         {
             for(int i = 0;i < Superblock.ClusterBitmap.Length;i++)
             {
-                if (Superblock.ClusterBitmap[i] == 0) 
+                if (Superblock.ClusterBitmap[i][0] == 0) 
                     return i;
             }
 

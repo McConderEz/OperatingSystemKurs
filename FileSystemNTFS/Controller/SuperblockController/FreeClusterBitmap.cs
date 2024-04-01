@@ -9,7 +9,13 @@ namespace FileSystemNTFS.BL.Controller.SuperblockController
     public partial class SuperblockController
     {
 
-        public void FreeClusterBitmap(int indexCluster) => Superblock.ClusterBitmap[indexCluster] = 0;
+        public void FreeClusterBitmap(int indexCluster)
+        {
+            for (int i = 0; i < Superblock.ClusterBitmap[indexCluster].Length; i++)
+            {
+                Superblock.ClusterBitmap[indexCluster][i] = 0;
+            }
+        }
         
     }
 }

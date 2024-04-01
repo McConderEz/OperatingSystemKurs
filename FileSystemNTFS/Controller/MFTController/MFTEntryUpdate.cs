@@ -19,8 +19,8 @@ namespace FileSystemNTFS.BL.Controller.MFTController
             if(mftItem != null)
             {
                 mftItem.Header.LogSequenceNumber = logSequence;
-                mftItem.Attributes.TimeMarks.ModificationTime = DateTime.Now;
                 mftItem.Attributes.TimeMarks.AccessTime = DateTime.Now;
+                mftItem.Attributes.BlocksCount = (uint)mftItem.Attributes.IndexesOnClusterBitmap.Count;
             }
         }
     }

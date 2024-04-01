@@ -17,5 +17,14 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             FileSystem = new FileSystem();
             CurrentPath = FileSystem.FileSystemPath;
         }
+
+
+        public void Save()
+        {
+            FileSystem.SuperblockController.Save();
+            FileSystem.MFTController.Save();
+        }
+
+       
     }
 }

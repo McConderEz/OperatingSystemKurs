@@ -8,6 +8,12 @@ namespace FileSystemNTFS.BL.Controller.SuperblockController
 {
     public partial class SuperblockController
     {
-        public void MarkClusterAsUsed(int clusterIndex) => Superblock.ClusterBitmap[clusterIndex] = 1;
+        public void MarkClusterAsUsed(byte[] dataBytes, int clusterIndex)
+        {
+            for (int j = 0; j < dataBytes.Length; j++)
+            {
+                Superblock.ClusterBitmap[clusterIndex][j] = dataBytes[j];
+            }
+        }
     }
 }

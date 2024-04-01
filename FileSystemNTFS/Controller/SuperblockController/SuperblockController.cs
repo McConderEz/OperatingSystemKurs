@@ -7,14 +7,23 @@ using System.Threading.Tasks;
 
 namespace FileSystemNTFS.BL.Controller.SuperblockController
 {
-    public partial class SuperblockController
+    public partial class SuperblockController : ControllerBase
     {
-        public Superblock Superblock { get; set; }
+        public Superblock Superblock { get; private set; }
 
         public SuperblockController()
         {
-            Superblock = new Superblock();
+            Superblock = Load();
         }
 
+        public Superblock Load()
+        {
+            return Load<Superblock>() ?? new Superblock();
+        }
+
+        public void Save()
+        {
+            Save(Superblock);
+        }
     }
 }

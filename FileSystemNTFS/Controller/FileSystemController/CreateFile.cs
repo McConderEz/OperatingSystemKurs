@@ -19,8 +19,12 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 
             File.Create(fullPath).Close();
 
-            FileSystem.MFTController.Create(new FileInfo(fullPath));
+            FileSystem.MFTController.Create(new FileInfo(fullPath), FileSystemObject.File);
 
+            var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath));
+            AddMFTDataToDir(mftItem);
+
+            Save();
             
             return true;
         }

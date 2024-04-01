@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileSystemNTFS.BL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,14 +21,19 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 
             var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath, StringComparison.OrdinalIgnoreCase));
 
-            using (var fs = new FileStream(fullPath, FileMode.Open, FileAccess.Write))
+            if(mftItem == null)
+                throw new ArgumentNullException("Запись MFT не может быть пустой!",nameof(mftItem));
+
+            using (MemoryStream stream = new MemoryStream())
             {
-                using(var bw = new BinaryWriter(fs))
+                byte[] dataBytes = Encoding.UTF8.GetBytes(data.ToString());
+                int dataSize = dataBytes.Length;
+                for (var i = 0; i < FileSystem.SuperblockController.Superblock.ClusterBitmap.Length; i++)
                 {
                     if (FileSystem.SuperblockController.IsClusterFree(i) && dataSize <= 4096) // Запись данных в файл, размер которых не превышает размер одного кластера(4кб)
                     {
                         FileSystem.SuperblockController.MarkClusterAsUsed(dataBytes, i);
-                        mftItem.Attributes.IndexesOnClusterBitmap.Add(new Indexer(i, dataSize)); //В индекс будем записывать первое значение - индекс кластера, второе - фактический размер занятого кластера из 4 кб
+                        mftItem.Attributes.IndexesOnClusterBitmap.Add(new Indexer(i)); //В индекс будем записывать первое значение - индекс кластера, второе - фактический размер занятого кластера из 4 кб
                         WriteBytesToFile(fullPath, stream, dataBytes, dataSize);
                         break;
                     }
@@ -38,17 +44,15 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                         break;
                     }
                 }
-                mftItem.Attributes.Length = new FileInfo(fullPath).Length;
+                mftItem.Attributes.Length = (ulong)new FileInfo(fullPath).Length;
+                mftItem.Attributes.TimeMarks.ModificationTime = DateTime.Now;
                 stream.Dispose();
                 stream.Close();
             }
 
-                    mftItem.Attributes.IndexesOnClusterBitmap.Add(new Indexer((int)startIndex, (int)(FileSystem.SuperblockController.Superblock.BitmapOffset - 1)));
-                    mftItem.Attributes.Length = (ulong)(new FileInfo(fullPath)).Length;
-                    FileSystem.MFTController.Update(mftItem);
-                }
-            }
+            FileSystem.MFTController.Update(mftItem);
 
+            Save();
 
         }
 

@@ -8,6 +8,6 @@ namespace FileSystemNTFS.BL.Controller.SuperblockController
 {
     public partial class SuperblockController
     {
-        public bool IsClusterFree(int clusterIndex) => Superblock.ClusterBitmap[clusterIndex] == 0;
+        public bool IsClusterFree(int clusterIndex) => Superblock.ClusterBitmap[clusterIndex][0] == 0;
     }
 }

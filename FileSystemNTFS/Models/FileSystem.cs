@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace FileSystemNTFS.BL.FileSystemOperation
 {
-    [DataContract]
     public class FileSystem
     {
         public string FileSystemPath { get; set; } = "D:\\FileSystem";
@@ -24,20 +23,14 @@ namespace FileSystemNTFS.BL.FileSystemOperation
             SuperblockController = new SuperblockController();
         }
 
-        //TODO:ФС        
-        //Создание файл
-        //Запись в конец файла
-        //Чтение файла
-        //Удаление файла
-        //Переименование файла
-        //Копирование файла
-        
-        //Сделать создание бинарного файла с данными
+        //TODO:
+        //Протестировать действия над каталогами и файлами(перемещение, копирование, переименование)
+        //Сделать журналирование
+        //Сделать многопользовательскую защиту
+        //Протестировать большую вложенность директорий(3 и более)
 
-        //Создание каталога
-        //Удаление каталога
-        //Переименование каталога
-        //Перемещение каталога
+        //Копирование каталога
 
+        //Список файла данной директории
     }
 }

@@ -2,28 +2,40 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSystemNTFS.BL
+namespace FileSystemNTFS.BL.Models
 {
+    [DataContract]
     public class Attribute
     {
-        public string FileName { get; private set; }
-        public string FullPath { get; private set; }
-        public string ParentsDirectory { get; private set; }
+        [DataMember]
+        public string FileName { get; set; }
+        [DataMember]
+        public string FullPath { get; set; }
+        [DataMember]
+        public string ParentsDirectory { get; set; }
+        [DataMember]
         public ulong Length { get; set; }
+        [DataMember]
         public uint OwnerId { get; private set; }
+        [DataMember]
         public List<uint> GroupId { get; private set; }
-        public uint BlocksCount { get; private set; }
+        [DataMember]
+        public uint BlocksCount { get; set; }
+        [DataMember]
         public TimeMarks TimeMarks { get; private set; }
+        [DataMember]
         public List<Indexer> IndexesOnClusterBitmap { get; private set; }
-        public UsersAccessFlags AccessFlags { get; private set; }
-
+        [DataMember]
+        public UsersAccessFlags AccessFlags { get; set; }
+        public List<Attribute> AttributesRefs { get; set; }
 
         public Attribute(string fileName, string fullPath,
                          ulong length, uint ownerId, List<uint> groupId, uint blocksCount,
-                         TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags)
+                         TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags, List<Attribute> attributesRefs)
         {
             FileName = fileName;
             FullPath = fullPath;
@@ -35,9 +47,10 @@ namespace FileSystemNTFS.BL
             TimeMarks = timeMarks;
             IndexesOnClusterBitmap = indexesOnClusterBitmap;
             AccessFlags = accessFlags;
+            AttributesRefs = attributesRefs;
         }
 
-        private string? GetParentsDir(string fullPath)
+        public string? GetParentsDir(string fullPath)
         {
             char[] separators = { '\\', '/', '\\' };
             int lastIndex = fullPath.LastIndexOfAny(separators);
@@ -51,9 +64,9 @@ namespace FileSystemNTFS.BL
         }
 
         [JsonConstructor]
-        public Attribute(string fileName, string fullPath, string parentsDirectory, 
-                         ulong length, uint ownerId, List<uint> groupId, uint blocksCount, 
-                         TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags)
+        public Attribute(string fileName, string fullPath, string parentsDirectory,
+                         ulong length, uint ownerId, List<uint> groupId, uint blocksCount,
+                         TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags, List<Attribute> attributesRefs)
         {
             FileName = fileName;
             FullPath = fullPath;
@@ -65,6 +78,7 @@ namespace FileSystemNTFS.BL
             TimeMarks = timeMarks;
             IndexesOnClusterBitmap = indexesOnClusterBitmap;
             AccessFlags = accessFlags;
+            AttributesRefs = attributesRefs;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace FileSystemNTFS.BL.Models
     [DataContract]
     public class MFT
     {
+        [DataMember]
         public List<MFTEntry> Entries { get; private set; }
 
         public MFT()

@@ -1,13 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace FileSystemNTFS.BL
+namespace FileSystemNTFS.BL.Models
 {
     [DataContract]
     public class TimeMarks
     {
+        [DataMember]
         public DateTime CreationTime { get; init; }
+        [DataMember]
         public DateTime ModificationTime { get; set; }
+        [DataMember]
         public DateTime AccessTime { get; set; }
 
 

@@ -7,11 +7,11 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSystemNTFS.BL
+namespace FileSystemNTFS.BL.Models
 {
     [DataContract]
     public class MFTEntryHeader
-    { 
+    {
         [DataMember]
         public uint LogSequenceNumber { get; set; }
         [DataMember]
@@ -22,7 +22,7 @@ namespace FileSystemNTFS.BL
         [JsonConstructor]
         public MFTEntryHeader(uint sequenceNumber, uint logSequenceNumber, FileSystemObject fileSystemObject = FileSystemObject.File)
         {
-            
+
             if (sequenceNumber < 0)
             {
                 throw new ArgumentException("Номер последовательности не может быть меньше нуля!", nameof(sequenceNumber));

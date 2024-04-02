@@ -1,4 +1,5 @@
 ﻿using FileSystemNTFS.BL.Models;
+using MultiuserProtection.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,26 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             if(!Directory.Exists(oldfullPath) || mftItem == null)
                 return;
 
-            
-            UpdateMFTEntryFromDirectory(mftItem);            
-            Directory.Move(oldfullPath, newfullPath);
-            mftItem.Attributes.FullPath = newfullPath;
-            mftItem.Attributes.ParentsDirectory = mftItem.Attributes.GetParentsDir(newfullPath);
-            FileSystem.MFTController.Update(mftItem);
+            if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.FullControl ||
+                        (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id && (mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify)) ||
+                        (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify)))
+            {
+                UpdateMFTEntryFromDirectory(mftItem);
+                Directory.Move(oldfullPath, newfullPath);
+                mftItem.Attributes.FullPath = newfullPath;
+                mftItem.Attributes.ParentsDirectory = mftItem.Attributes.GetParentsDir(newfullPath);
+                FileSystem.MFTController.Update(mftItem);
 
-            Save();      
+                Save();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Недостаточно прав!");
+                Console.ResetColor();
+            }
         }
 
         public void UpdateMFTEntryFromDirectory(MFTEntry entry)

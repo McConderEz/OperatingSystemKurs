@@ -12,7 +12,7 @@ namespace FileSystemNTFS.BL.Models
     public class Superblock
     {        
         public readonly string OperatingSystemName = "Stellar OS";
-        public readonly ulong TotalDiskSize = 131072000; // TODO: указать максимальное количество свободного места
+        public readonly ulong TotalDiskSize = 131072000;
 
         public const uint ClusterUnitSize = 4096;
 
@@ -48,11 +48,5 @@ namespace FileSystemNTFS.BL.Models
                 ClusterBitmap[i] = new byte[ClusterUnitSize];
             }
         }
-
-        //TODO: Проверка свободен ли кластер, Пометить кластер как занятый,
-        //Пометить кластер как занятый для большого файла,
-        //Пометить кластер как свободный
-        //Найти свободный кластер
-        //Очистить Карту кластеров
     }
 }

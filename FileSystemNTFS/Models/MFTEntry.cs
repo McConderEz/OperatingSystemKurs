@@ -41,7 +41,5 @@ namespace FileSystemNTFS.BL.Models
             Header = header;
             Attributes = attribute;
         }
-
-        //TODO: Переопределить ToString
     }
 }

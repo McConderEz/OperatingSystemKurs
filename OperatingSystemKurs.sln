@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OperatingSystemKurs", "Oper
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSystemNTFS.BL", "FileSystemNTFS\FileSystemNTFS.BL.csproj", "{63DA94F2-F255-4ECA-AB85-5A41B2DACD87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiuserProtection.BL", "MultiuserProtection.BL\MultiuserProtection.BL.csproj", "{5D71427D-10C0-46BB-A6A5-5CC07B0858C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiuserProtection.Domain", "MultiuserProtection.BL\MultiuserProtection.Domain.csproj", "{5D71427D-10C0-46BB-A6A5-5CC07B0858C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskPlanner.BL", "TaskPlanner.BL\TaskPlanner.BL.csproj", "{D4499BB0-2FF0-41F6-904C-8ACB09BD858D}"
 EndProject

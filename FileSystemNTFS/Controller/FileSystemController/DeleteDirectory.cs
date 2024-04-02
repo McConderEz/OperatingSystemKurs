@@ -1,4 +1,5 @@
 ﻿using FileSystemNTFS.BL.Models;
+using MultiuserProtection.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,11 +25,28 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                 return false;
             }
 
-            DeleteAllMFTItemOfDirectory(mftItem);
-            Directory.Delete(fullPath, true);
+            if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.FullControl ||
+                        (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id &&
+                        (mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify)) ||
+                        (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) &&
+                        (mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify)))
+            {
 
-            Save();
-            return true;
+                DeleteAllMFTItemOfDirectory(mftItem);
+                Directory.Delete(fullPath, true);
+
+                Save();
+                return true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Недостаточно прав");
+                Console.ResetColor();
+                return false;
+            }
         }
 
         public void DeleteAllMFTItemOfDirectory(MFTEntry entry)

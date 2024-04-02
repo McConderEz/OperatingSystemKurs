@@ -9,10 +9,13 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 {
     public partial class FileSystemController
     {
-        public bool CopyTo(string firstFileName, string newFilePath)
+        public void CopyDirTo(string dirName, string newFullPath)
         {
-            var fullPath = Path.Combine(CurrentPath, firstFileName + ".bin");
+            var fullPath = Path.Combine(CurrentPath, dirName);
             var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath));
+
+            if (mftItem == null || !Directory.Exists(fullPath))
+                return;
 
             if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
                             mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
@@ -21,31 +24,31 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                             (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify)))
             {
 
-                if (!File.Exists(fullPath) || mftItem == null || File.Exists(newFilePath))
+                string oldCurrentPath = CurrentPath;
+                CurrentPath = newFullPath;
+                CreateDirectory(dirName);
+
+                CurrentPath = fullPath;
+                foreach (string file in Directory.GetFiles(fullPath))
                 {
-                    return false;
+                    string targetFile = Path.Combine(newFullPath, dirName, Path.GetFileName(file));
+                    CopyTo(Path.GetFileNameWithoutExtension(file), targetFile);
                 }
 
-                CreateFile(Path.GetFileNameWithoutExtension(newFilePath), Path.GetDirectoryName(newFilePath));
-
-                if (mftItem.Attributes.Length > 0)
+                foreach (string directory in Directory.GetDirectories(fullPath))
                 {
-                    var data = ReadFile(firstFileName);
-                    CurrentPath = Path.GetDirectoryName(newFilePath);
-                    WriteFile(Path.GetFileName(newFilePath), data);
-                    CurrentPath = Path.GetDirectoryName(mftItem.Attributes.FullPath);
+                    string targetSubdirectory = Path.Combine(newFullPath, dirName, Path.GetFileName(directory));
+                    CopyDirTo(directory, targetSubdirectory);
                 }
 
+                CurrentPath = oldCurrentPath;
                 Save();
-
-                return true;
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Недостаточно прав");
                 Console.ResetColor();
-                return false;
             }
         }
     }

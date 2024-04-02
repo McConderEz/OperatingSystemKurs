@@ -6,24 +6,21 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSystemNTFS.BL.Models
+namespace MultiuserProtection.BL.Models
 {
     [DataContract]
-    public class MFT
+    public class Group
     {
         [DataMember]
-        public List<MFTEntry> Entries { get; private set; }
-
-        public MFT()
-        {
-            Entries = new List<MFTEntry>();
-        }
+        public string Name { get; set; }
+        [DataMember]
+        public List<User> Users { get; set; }
 
         [JsonConstructor]
-        public MFT(List<MFTEntry> entries)
+        public Group(string name, List<User> users)
         {
-            Entries = entries;
+            Name = name;
+            Users = users;
         }
-
     }
 }

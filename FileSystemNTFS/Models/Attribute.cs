@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MultiuserProtection.BL.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace FileSystemNTFS.BL.Models
         [DataMember]
         public uint OwnerId { get; private set; }
         [DataMember]
-        public List<uint> GroupId { get; private set; }
+        public List<Group> Groups { get; private set; }
         [DataMember]
         public uint BlocksCount { get; set; }
         [DataMember]
@@ -31,10 +32,11 @@ namespace FileSystemNTFS.BL.Models
         public List<Indexer> IndexesOnClusterBitmap { get; private set; }
         [DataMember]
         public UsersAccessFlags AccessFlags { get; set; }
+        [DataMember]
         public List<Attribute> AttributesRefs { get; set; }
 
         public Attribute(string fileName, string fullPath,
-                         ulong length, uint ownerId, List<uint> groupId, uint blocksCount,
+                         ulong length, uint ownerId, List<Group> groups, uint blocksCount,
                          TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags, List<Attribute> attributesRefs)
         {
             FileName = fileName;
@@ -42,7 +44,7 @@ namespace FileSystemNTFS.BL.Models
             ParentsDirectory = GetParentsDir(fullPath);
             Length = length;
             OwnerId = ownerId;
-            GroupId = groupId;
+            Groups = groups;
             BlocksCount = blocksCount;
             TimeMarks = timeMarks;
             IndexesOnClusterBitmap = indexesOnClusterBitmap;
@@ -63,9 +65,14 @@ namespace FileSystemNTFS.BL.Models
             return "";
         }
 
+        public void ChangeMode(UsersAccessFlags usersAccessFlags)
+        {
+            AccessFlags = usersAccessFlags;
+        }
+
         [JsonConstructor]
         public Attribute(string fileName, string fullPath, string parentsDirectory,
-                         ulong length, uint ownerId, List<uint> groupId, uint blocksCount,
+                         ulong length, uint ownerId, List<Group> groups, uint blocksCount,
                          TimeMarks timeMarks, List<Indexer> indexesOnClusterBitmap, UsersAccessFlags accessFlags, List<Attribute> attributesRefs)
         {
             FileName = fileName;
@@ -73,7 +80,7 @@ namespace FileSystemNTFS.BL.Models
             ParentsDirectory = parentsDirectory;
             Length = length;
             OwnerId = ownerId;
-            GroupId = groupId;
+            Groups = groups;
             BlocksCount = blocksCount;
             TimeMarks = timeMarks;
             IndexesOnClusterBitmap = indexesOnClusterBitmap;

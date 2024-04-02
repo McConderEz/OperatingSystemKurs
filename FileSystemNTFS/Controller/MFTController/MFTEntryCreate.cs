@@ -1,4 +1,5 @@
 ﻿using FileSystemNTFS.BL.Models;
+using MultiuserProtection.BL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,8 @@ namespace FileSystemNTFS.BL.Controller.MFTController
                                           .Max() + 1;
 
             MFTEntryHeader header = new MFTEntryHeader((uint)(MFT.Entries.Count + 1), logSequence, fileSystemObject);
-            //TODO:Времено ownderid и groupid  = 1
-            Attribute attribute = new Attribute(fileInfo.Name, fileInfo.FullName, 0, 1,
-                                                new List<uint>(), 0, new TimeMarks(),
+            Attribute attribute = new Attribute(fileInfo.Name, fileInfo.FullName, 0, User.CurrentUser.Id,
+                                                User.CurrentUser.Groups, 0, new TimeMarks(),
                                                 new List<Indexer>(), new UsersAccessFlags(), new List<Attribute>());
 
             MFT.Entries.Add(new MFTEntry(header, attribute));

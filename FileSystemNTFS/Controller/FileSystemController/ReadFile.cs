@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiuserProtection.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,19 +18,35 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             if(mftItem == null || !File.Exists(fullPath))
                 return null;
 
-            string data = "";
-
-            using(FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+            if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.Read ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
+                        mftItem.Attributes.AccessFlags.O == AttributeFlags.FullControl ||
+                        (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id && (mftItem.Attributes.AccessFlags.U == AttributeFlags.Read || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl)) ||
+                        (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.Read || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl)))
             {
-                using(StreamReader sr = new StreamReader(fs))
+
+                string data = "";
+
+                using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
                 {
-                    data = sr.ReadToEnd();
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        data = sr.ReadToEnd();
+                    }
                 }
+
+                FileSystem.MFTController.Update(mftItem);
+
+                return new StringBuilder(data);
             }
-
-            FileSystem.MFTController.Update(mftItem);
-
-            return new StringBuilder(data);
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Недостаточно прав");
+                Console.ResetColor();
+                return null;
+            }
         }
     }
 }

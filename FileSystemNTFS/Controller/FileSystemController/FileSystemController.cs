@@ -12,9 +12,21 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
         public FileSystem FileSystem { get; private set; }
         public string CurrentPath { get; set; }
 
-        public FileSystemController()
+        public FileSystemController(string login, string password)
         {
-            FileSystem = new FileSystem();
+            
+            if (RootDirExists(@"D:\FileSystem", login, password))
+            {
+                
+            }
+            else
+            {
+                FileSystem = new FileSystem(login, password);
+                Formatting();
+                Save();
+            }
+
+
             CurrentPath = FileSystem.FileSystemPath;
         }
 

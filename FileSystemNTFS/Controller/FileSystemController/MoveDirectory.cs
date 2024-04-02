@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiuserProtection.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +17,26 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             if (mftItem == null || !Directory.Exists(oldfullPath))
                 return;
 
-            UpdateMFTEntryFromDirectory(mftItem);
-            UpdateMFTEntryFromDirectory(mftItem);
-            mftItem.Attributes.FullPath = newDirPath;
-            mftItem.Attributes.ParentsDirectory = mftItem.Attributes.GetParentsDir(newDirPath);
-            FileSystem.MFTController.Update(mftItem);
-            Directory.Move(oldfullPath, newDirPath);            
-            Save();
+            if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
+                            mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
+                            mftItem.Attributes.AccessFlags.O == AttributeFlags.FullControl ||
+                            (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id && (mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify)) ||
+                            (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify)))
+            {
+                UpdateMFTEntryFromDirectory(mftItem);
+                UpdateMFTEntryFromDirectory(mftItem);
+                mftItem.Attributes.FullPath = newDirPath;
+                mftItem.Attributes.ParentsDirectory = mftItem.Attributes.GetParentsDir(newDirPath);
+                FileSystem.MFTController.Update(mftItem);
+                Directory.Move(oldfullPath, newDirPath);
+                Save();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Недостаточно прав!");
+                Console.ResetColor();
+            }
         }
     }
 }

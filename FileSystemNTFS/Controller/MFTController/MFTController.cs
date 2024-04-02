@@ -10,10 +10,12 @@ namespace FileSystemNTFS.BL.Controller.MFTController
     public partial class MFTController : ControllerBase
     {
         public MFT MFT { get; private set; }
+        public UserController User { get; private set; }
 
-        public MFTController()
+        public MFTController(UserController user)
         {
             MFT = Load();
+            User = user;
         }
 
         public MFT Load()

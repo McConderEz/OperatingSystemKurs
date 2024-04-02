@@ -8,9 +8,9 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 {
     public partial class FileSystemController
     {
-        public bool RootDirExists(string path)
+        public bool RootDirExists(string path, string login, string password)
         {
-            return ProcessDirectory(path, "D:\\", 1, 5);
+            return ProcessDirectory(path, "D:\\", 1, 5, login, password);
         }
     }
 }

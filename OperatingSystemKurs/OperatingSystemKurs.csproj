@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FileSystemNTFS\FileSystemNTFS.BL.csproj" />
+    <ProjectReference Include="..\InterprocessCommunication.BL\InterprocessCommunication.BL.csproj" />
   </ItemGroup>
 
 </Project>

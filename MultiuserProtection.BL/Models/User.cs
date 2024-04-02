@@ -58,6 +58,11 @@ namespace MultiuserProtection.BL.Models
             HashPassword = hashPassword;
         }
 
+        public User()
+        {
+
+        }
+
         public override string ToString()
         {
             return $"{Id}\t{Login}\t{AccountType}\t{LastLoginDate}";

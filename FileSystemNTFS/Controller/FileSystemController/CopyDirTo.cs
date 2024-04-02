@@ -37,8 +37,9 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 
                 foreach (string directory in Directory.GetDirectories(fullPath))
                 {
-                    string targetSubdirectory = Path.Combine(newFullPath, dirName, Path.GetFileName(directory));
-                    CopyDirTo(directory, targetSubdirectory);
+                    string subdirectoryName = Path.GetFileName(directory);
+                    string targetSubdirectory = Path.Combine(newFullPath, dirName);
+                    CopyDirTo(subdirectoryName, targetSubdirectory);
                 }
 
                 CurrentPath = oldCurrentPath;

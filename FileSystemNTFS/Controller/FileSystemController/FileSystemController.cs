@@ -21,6 +21,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             }
             else
             {
+                DeleteMetaData();
                 FileSystem = new FileSystem(login, password);
                 Formatting();
                 Save();
@@ -37,6 +38,27 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             FileSystem.MFTController.Save();
         }
 
+        public void DeleteMetaData()
+        {
+            var mftPath = Path.Combine(Environment.CurrentDirectory, "MFT.json");
+            var superblockPath = Path.Combine(Environment.CurrentDirectory, "Superblock.json");
+            var usersPath = Path.Combine(Environment.CurrentDirectory, "List`1.json");
+
+            if (File.Exists(mftPath))
+            {
+                File.Delete(mftPath);
+            }
+
+            if (File.Exists(superblockPath))
+            {
+                File.Delete(superblockPath);
+            }
+
+            if (File.Exists(usersPath))
+            {
+                File.Delete(usersPath);
+            }
+        }
        
     }
 }

@@ -1,0 +1,131 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+
+namespace InterprocessCommunication.BL
+{
+    public class InterProcessCommunication
+    {
+        public void Start()
+        {
+            ExampleChannel();
+
+            ExampleNamedPipe();
+
+            ExampleMemoryMapped();
+
+            Console.WriteLine("Нажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+
+        static void ExampleChannel()
+        {
+            Console.WriteLine("Пример работы с обычным каналом");
+
+            var channel = new Channel<int>();
+
+            Task producerTask = Task.Run(() =>
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Отправка данных в канал: {i}");
+                    channel.Send(i);
+                    Thread.Sleep(100);
+                }
+                Console.ResetColor();
+                channel.Close();
+            });
+
+            Task consumerTask = Task.Run(() =>
+            {
+                foreach (var item in channel)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Получено из канала: {item}");
+                }
+                Console.ResetColor();
+            });
+
+            Task.WaitAll(producerTask, consumerTask);
+
+            Console.WriteLine();
+        }
+        static void ExampleNamedPipe()
+        {
+            Console.WriteLine("Пример работы с именованным каналом");
+
+            string pipeName = "MyNamedPipe";
+
+            Task producerTask = Task.Run(() =>
+            {
+                using (var namedPipeServer = new NamedPipeServer(pipeName))
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Отправка данных в именнованный канал: {i}");
+                        namedPipeServer.Send(i);
+                        Thread.Sleep(100);
+                    }
+                    Console.ResetColor();
+                }
+            });
+            Task consumerTask = Task.Run(() =>
+            {
+                using (var namedPipeClient = new NamedPipeClient(pipeName))
+                {
+                    int data;
+                    while ((data = namedPipeClient.Receive()) != -1)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Получено из именованного канала: {data}");
+                    }
+                    Console.ResetColor();
+                }
+            });
+
+            Task.WaitAll(producerTask, consumerTask);
+
+            Console.WriteLine();
+        }
+
+        static void ExampleMemoryMapped()
+        {
+            Console.WriteLine("Пример работы с отображаемой памятью");
+
+            using (var memoryMappedFile = new MemoryMappedFile<int>("MyMemoryMappedFile", 10))
+            {
+                Task producerTask = Task.Run(() =>
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        memoryMappedFile.Write(i);
+                        Thread.Sleep(100);
+                    }
+                    Console.ResetColor();
+                });
+
+
+                Task consumerTask = Task.Run(() =>
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        int data = memoryMappedFile.Read();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Прочитано из отображаемой памяти: {data}");
+                        Thread.Sleep(100);
+                    }
+                    Console.ResetColor();
+                });
+
+                Task.WaitAll(producerTask, consumerTask);
+            }
+
+            Console.WriteLine();
+        }
+    }
+}

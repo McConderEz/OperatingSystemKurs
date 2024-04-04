@@ -116,7 +116,8 @@ namespace FileSystemNTFS.BL.Controller
             }
         }
 
-        public void DeletGroup(string name)
+        //TODO:Удалять группу из mftEntry
+        public void DeleteGroup(string name)
         {
             var group = Groups.SingleOrDefault(g => g.Name.Equals(name));
 

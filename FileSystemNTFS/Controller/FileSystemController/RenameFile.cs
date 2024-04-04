@@ -30,7 +30,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                 File.Move(fullOldPath, fullNewPath);
                 
                 mftItem.Attributes.TimeMarks.ModificationTime = DateTime.Now;
-                mftItem.Attributes.FileName = newName;
+                mftItem.Attributes.FileName = newName + ".bin";
                 mftItem.Attributes.FullPath = fullNewPath;
                 FileSystem.MFTController.Update(mftItem);
                 Save();

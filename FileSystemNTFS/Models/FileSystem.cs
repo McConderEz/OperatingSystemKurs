@@ -20,12 +20,24 @@ namespace FileSystemNTFS.BL.FileSystemOperation
         public GroupController GroupController { get; set; }
         public Journal Journal { get; set; }
 
-        public FileSystem(string login, string password)
+        public FileSystem()
+        {
+            GroupController = new GroupController();            
+            SuperblockController = new SuperblockController();
+            UserController = new UserController();
+        }
+
+        public bool Authorize(string login, string password)
         {
             UserController = new UserController(login, password);
-            GroupController = new GroupController();
-            MFTController = new MFTController(UserController);
-            SuperblockController = new SuperblockController();
+            
+            if(UserController.CurrentUser != null)
+            {
+                MFTController = new MFTController(UserController);
+                return true;
+            }
+
+            return false;
         }
 
         //TODO:

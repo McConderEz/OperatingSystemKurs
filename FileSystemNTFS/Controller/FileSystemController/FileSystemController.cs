@@ -12,17 +12,17 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
         public FileSystem FileSystem { get; private set; }
         public string CurrentPath { get; set; }
 
-        public FileSystemController(string login, string password)
+        public FileSystemController()
         {
             
-            if (RootDirExists(@"D:\FileSystem", login, password))
+            if (RootDirExists(@"D:\FileSystem"))
             {
                 
             }
             else
             {
                 DeleteMetaData();
-                FileSystem = new FileSystem(login, password);
+                FileSystem = new FileSystem();
                 Formatting();
                 Save();
             }

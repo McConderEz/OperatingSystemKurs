@@ -44,9 +44,7 @@ namespace FileSystemNTFS.BL.Controller
                 Save();
             }
 
-            root = Authorize(login, password, root);
-
-            CurrentUser = Users.SingleOrDefault(u => u.Login.Equals(login));
+            CurrentUser = Authorize(login, password, root);
 
             if (CurrentUser == null)
             {
@@ -70,22 +68,23 @@ namespace FileSystemNTFS.BL.Controller
 
         private User? Authorize(string login, string password, User? root)
         {
+            User user;
             if (login.Equals("root") && password.Equals("root"))
             {
                 root = Users.SingleOrDefault(u => u.Login == "root" && _cryptographyController.ValidatePassword("root", u.HashPassword));
-                CurrentUser = root;
+                user = root;
 
             }
             else if (login.Equals("guest") && password.Equals("guest"))
             {
-                CurrentUser = new User(0, new List<Group>(), login, _cryptographyController.GenerateHash(password), DateTime.Now, AccountType.Guest);
+                user = new User(0, new List<Group>(), login, _cryptographyController.GenerateHash(password), DateTime.Now, AccountType.Guest);
             }
             else
             {
-                CurrentUser = Users.SingleOrDefault(u => u.Login == login && _cryptographyController.ValidatePassword(password, u.HashPassword));
+                user = Users.SingleOrDefault(u => u.Login == login && _cryptographyController.ValidatePassword(password, u.HashPassword));
             }
 
-            return root;
+            return user;
         }
 
         public void AddNewUser(string login, string password)
@@ -141,7 +140,7 @@ namespace FileSystemNTFS.BL.Controller
             }
         }
 
-        public void DeletUser(string login)
+        public void DeleteUser(string login)
         {
             var user = Users.SingleOrDefault(u => u.Login.Equals(login));
 

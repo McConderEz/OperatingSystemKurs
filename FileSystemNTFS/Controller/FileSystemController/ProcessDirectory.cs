@@ -9,7 +9,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 {
     public partial class FileSystemController
     {
-        public bool ProcessDirectory(string targetDirectory, string searchDirectory, int depth, int maxDepth, string login, string password)
+        public bool ProcessDirectory(string targetDirectory, string searchDirectory, int depth, int maxDepth)
         {
             if (string.Equals(targetDirectory, searchDirectory, StringComparison.OrdinalIgnoreCase))
             {
@@ -26,9 +26,9 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                 string[] subdirectoryEntries = Directory.GetDirectories(searchDirectory);
                 foreach (string subdirectory in subdirectoryEntries)
                 {
-                    if (ProcessDirectory(targetDirectory, subdirectory, depth + 1, maxDepth,  login,  password))
+                    if (ProcessDirectory(targetDirectory, subdirectory, depth + 1, maxDepth))
                     {
-                        FileSystem = new FileSystem(login, password);
+                        FileSystem = new FileSystem();
                         FileSystem.FileSystemPath = subdirectory;
                         return true;
                     }

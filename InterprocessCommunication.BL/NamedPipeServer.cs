@@ -14,7 +14,7 @@ namespace InterprocessCommunication.BL
         public NamedPipeServer(string pipeName)
         {
             _pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.Out, 1);
-            _pipeServer.WaitForConnection(); // Ожидание подключения клиента
+            _pipeServer.WaitForConnection();
         }
 
         public void Send(int data)

@@ -17,13 +17,20 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 
             if (!File.Exists(fullPath))
             {
-                throw new FileNotFoundException("Файл не найден!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Файла не существует!");
+                Console.ResetColor();
+                return;
             }
 
             var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath, StringComparison.OrdinalIgnoreCase));
 
-            if(mftItem == null)
-                throw new ArgumentNullException("Запись MFT не может быть пустой!",nameof(mftItem));
+            if (mftItem == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Запись MFT не существует!");
+                Console.ResetColor();
+            }
 
             if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
                         mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||

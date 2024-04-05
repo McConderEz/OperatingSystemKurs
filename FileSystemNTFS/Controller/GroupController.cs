@@ -1,4 +1,5 @@
-﻿using FileSystemNTFS.BL.Models;
+﻿using FileSystemNTFS.BL.Controller.MFTController;
+using FileSystemNTFS.BL.Models;
 using MultiuserProtection.BL.Models;
 using System;
 using System.Collections.Generic;
@@ -11,18 +12,26 @@ namespace FileSystemNTFS.BL.Controller
 {
     public class GroupController : ControllerBase
     {
+ 
         public List<Group> Groups { get; set; }
         private UserController _userController { get; set; }
 
-        public GroupController()
+
+        public GroupController(UserController userController)
         {
             Groups = Load();
-            _userController = new UserController();
+            _userController = userController;
         }
 
         public List<Group> Load()
         {
             return Load<List<Group>>() ?? new List<Group>();
+        }
+
+        public void SetCurrentUser(User user)
+        {
+            _userController.CurrentUser = user;
+            _userController.Update();
         }
 
         public List<Group> GetAllGroupOfUser(string login)
@@ -59,14 +68,21 @@ namespace FileSystemNTFS.BL.Controller
             }
         }
 
-        public void AddNewGroup(string name)
+        public void AddNewGroup(string name, MFTController.MFTController mftController)
         {
             var group = Groups.SingleOrDefault(g => g.Name.Equals(name));
 
             if(group == null)
             {
-                Groups.Add(new Group(name, new List<User>()));
+                Groups.Add(new Group(name, new List<User>() { _userController.CurrentUser }));
+                _userController.CurrentUser.Groups.Add(group);
+                _userController.Users.SingleOrDefault(x => x.Login.Equals(_userController.CurrentUser.Login)).Groups.Add(Groups.SingleOrDefault(x=>x.Name.Equals(name)));
+
+                mftController.MFT.Entries.Where(x => x.Attributes.OwnerId.Equals(_userController.CurrentUser.Id));              
+                _userController.Save();
                 Save();
+                mftController.MFT.Entries.ForEach(mftController.Update);
+                mftController.Save();
             }
             else
             {
@@ -103,8 +119,8 @@ namespace FileSystemNTFS.BL.Controller
 
             if (group != null && user != null)
             {
-                group.Users.Remove(user);
-                user.Groups.Remove(group);
+                group.Users.Remove(group.Users.FirstOrDefault(u => u.Login.Equals(user.Login)));
+                user.Groups.Remove(user.Groups.FirstOrDefault(g => g.Name.Equals(group.Name)));
                 _userController.Save();
                 Save();
             }
@@ -116,8 +132,8 @@ namespace FileSystemNTFS.BL.Controller
             }
         }
 
-        //TODO:Удалять группу из mftEntry
-        public void DeleteGroup(string name)
+        
+        public void DeleteGroup(string name, MFTController.MFTController mftController)
         {
             var group = Groups.SingleOrDefault(g => g.Name.Equals(name));
 
@@ -130,7 +146,13 @@ namespace FileSystemNTFS.BL.Controller
                     {
                         user.Groups.Remove(groupToRemove);
                     }
-                } 
+                }
+
+                var mftEntries = mftController.MFT.Entries
+                                                  .Where(e => e.Attributes?.Groups?.Any(x => x != null && x.Name.Contains(group.Name)) == true)
+                                                  .ToList();
+                mftEntries.ForEach(x => x.Attributes.Groups.RemoveAll(x => x.Name.Equals(name)));
+                mftController.Save();
 
                 Groups.Remove(group);
                 _userController.Save();

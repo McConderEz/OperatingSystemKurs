@@ -22,5 +22,10 @@ namespace MultiuserProtection.BL.Models
             Name = name;
             Users = users;
         }
+
+        public Group()
+        {
+
+        }
     }
 }

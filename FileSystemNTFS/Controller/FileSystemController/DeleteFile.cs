@@ -25,7 +25,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 
             var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath, StringComparison.OrdinalIgnoreCase));
             if (mftItem == null)
-                throw new ArgumentNullException("Такой записи не существует!", nameof(mftItem));
+                return false;
 
             if (FileSystem.UserController.CurrentUser.AccountType == AccountType.Administrator ||
                         mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||

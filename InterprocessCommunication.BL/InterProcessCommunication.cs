@@ -93,33 +93,36 @@ namespace InterprocessCommunication.BL
             Console.WriteLine();
         }
 
-        static void ExampleMemoryMapped()
+        static void ExampleMemoryMapped() //TODO: Добавить синхронизацию
         {
             Console.WriteLine("Пример работы с отображаемой памятью");
 
             using (var memoryMappedFile = new MemoryMappedFile<int>("MyMemoryMappedFile", 10))
             {
+                var producerSemaphore = new SemaphoreSlim(1);
+                var consumerSemaphore = new SemaphoreSlim(0);
+
                 Task producerTask = Task.Run(() =>
                 {
                     for (int i = 0; i < 10; i++)
                     {
+                        producerSemaphore.Wait();
                         memoryMappedFile.Write(i);
+                        consumerSemaphore.Release();
                         Thread.Sleep(100);
                     }
-                    Console.ResetColor();
                 });
-
 
                 Task consumerTask = Task.Run(() =>
                 {
                     for (int i = 0; i < 10; i++)
                     {
+                        consumerSemaphore.Wait();
                         int data = memoryMappedFile.Read();
-                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Прочитано из отображаемой памяти: {data}");
+                        producerSemaphore.Release();
                         Thread.Sleep(100);
                     }
-                    Console.ResetColor();
                 });
 
                 Task.WaitAll(producerTask, consumerTask);

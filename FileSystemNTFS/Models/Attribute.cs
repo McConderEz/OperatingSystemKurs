@@ -23,7 +23,7 @@ namespace FileSystemNTFS.BL.Models
         [DataMember]
         public uint OwnerId { get; private set; }
         [DataMember]
-        public List<Group> Groups { get; private set; }
+        public List<Group> Groups { get; set; }
         [DataMember]
         public uint BlocksCount { get; set; }
         [DataMember]

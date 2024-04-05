@@ -13,9 +13,9 @@ namespace FileSystemNTFS.BL.Controller
 {
     public class UserController : ControllerBase
     {
-        public List<User> Users { get; }
+        public List<User> Users { get; set; }
 
-        public User CurrentUser { get; private set; }
+        public User CurrentUser { get; set; }
 
         public bool IsNewUser { get; } = false;
         private CryptographyController _cryptographyController { get; set; }
@@ -40,8 +40,9 @@ namespace FileSystemNTFS.BL.Controller
 
             if (root == null)
             {
-                Users.Add(new User(0, new List<Group>(), login, _cryptographyController.GenerateHash(password), DateTime.Now, AccountType.Administrator));
+                Users.Add(new User(0, new List<Group>(), "root", _cryptographyController.GenerateHash("root"), DateTime.Now, AccountType.Administrator));
                 Save();
+                Users = GetUsersData();
             }
 
             CurrentUser = Authorize(login, password, root);
@@ -168,6 +169,11 @@ namespace FileSystemNTFS.BL.Controller
         public void Save()
         {
             Save(Users);
+        }
+
+        public void Update()
+        {
+            Users = GetUsersData();
         }
     }
 }

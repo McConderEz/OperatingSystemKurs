@@ -18,6 +18,7 @@ namespace FileSystemNTFS.BL.Controller.MFTController
 
             if(mftItem != null)
             {
+                mftItem.Attributes.Groups = User.CurrentUser.Groups;
                 mftItem.Header.LogSequenceNumber = logSequence;
                 mftItem.Attributes.TimeMarks.AccessTime = DateTime.Now;
                 mftItem.Attributes.BlocksCount = (uint)mftItem.Attributes.IndexesOnClusterBitmap.Count;

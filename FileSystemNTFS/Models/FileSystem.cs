@@ -21,8 +21,7 @@ namespace FileSystemNTFS.BL.FileSystemOperation
         public Journal Journal { get; set; }
 
         public FileSystem()
-        {
-            GroupController = new GroupController();            
+        {                        
             SuperblockController = new SuperblockController();
             UserController = new UserController();
         }
@@ -33,6 +32,7 @@ namespace FileSystemNTFS.BL.FileSystemOperation
             
             if(UserController.CurrentUser != null)
             {
+                GroupController = new GroupController(UserController);
                 MFTController = new MFTController(UserController);
                 return true;
             }
@@ -40,10 +40,6 @@ namespace FileSystemNTFS.BL.FileSystemOperation
             return false;
         }
 
-        //TODO:
-        //Работу всей ФС с тестированием многопользовательской защиты
-        //Сделать интерфейс
-        //Протестировать большую вложенность директорий(3 и более)
 
     }
 }

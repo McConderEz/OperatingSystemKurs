@@ -22,6 +22,8 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                     (mftEntry.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftEntry.Attributes.AccessFlags.G == AttributeFlags.FullControl || mftEntry.Attributes.AccessFlags.G == AttributeFlags.ChangeMode)))
                 {
                     mftEntry.Attributes.ChangeMode(usersAccessFlags);
+                    var mftDir = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(mftEntry.Attributes.ParentsDirectory));
+                    mftDir.Attributes.AttributesRefs.SingleOrDefault(x => x.FileName.Equals(mftEntry.Attributes.FileName)).AccessFlags = usersAccessFlags;
                     Save();
                 }
                 else

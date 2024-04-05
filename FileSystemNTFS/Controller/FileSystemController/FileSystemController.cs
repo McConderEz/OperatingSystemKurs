@@ -9,7 +9,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
 {
     public partial class FileSystemController
     {
-        public FileSystem FileSystem { get; private set; }
+        public FileSystem FileSystem { get; set; }
         public string CurrentPath { get; set; }
 
         public FileSystemController()

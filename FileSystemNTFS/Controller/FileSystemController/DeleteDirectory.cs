@@ -20,7 +20,7 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
             var fullPath = Path.Combine(CurrentPath, dirName);
             var mftItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.FullPath.Equals(fullPath));
 
-            if(!Directory.Exists(dirName) || mftItem == null)
+            if(!Directory.Exists(fullPath) || mftItem == null)
             {
                 return false;
             }
@@ -53,7 +53,11 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
         {
             for(int i = 0;i < entry.Attributes.AttributesRefs.Count;i++)
             {
-                var deletedItem = FileSystem.MFTController.MFT.Entries.SingleOrDefault(x => x.Attributes.ParentsDirectory.Equals(entry.Attributes.FileName));
+                var deletedItem = FileSystem.MFTController.MFT.Entries.FirstOrDefault(x => x.Attributes.ParentsDirectory.Equals(entry.Attributes.FullPath));
+                if(deletedItem.Attributes.AttributesRefs.Count > 0 )
+                {
+                    DeleteAllMFTItemOfDirectory(deletedItem);
+                }
                 FileSystem.SuperblockController.FreeAllClustersMFTEntry(deletedItem);
                 FileSystem.MFTController.MFT.Entries.Remove(deletedItem);
             }

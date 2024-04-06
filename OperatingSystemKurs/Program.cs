@@ -175,7 +175,7 @@ while (true)
                 string dirNameToCopy = Console.ReadLine();
                 Console.WriteLine("Введите путь для копируемой директории:");
                 string newFullDirPathToCopy = Console.ReadLine();
-                fileSystemController.CopyTo(dirNameToCopy, newFullDirPathToCopy);
+                fileSystemController.CopyDirTo(dirNameToCopy, newFullDirPathToCopy);
                 break;
             case "Вывести список пользователей":
                 var userTable = new Table();

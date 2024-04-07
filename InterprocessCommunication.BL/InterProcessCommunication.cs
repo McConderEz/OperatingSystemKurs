@@ -93,7 +93,7 @@ namespace InterprocessCommunication.BL
             Console.WriteLine();
         }
 
-        static void ExampleMemoryMapped() //TODO: Добавить синхронизацию
+        static void ExampleMemoryMapped()
         {
             Console.WriteLine("Пример работы с отображаемой памятью");
 

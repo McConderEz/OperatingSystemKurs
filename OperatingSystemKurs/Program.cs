@@ -87,7 +87,7 @@ while (true)
                         "Удаление пользователя из группы", "Создание группы", "Удаление группы",
                         "Смена пользователя", "Текущий пользователь в системе", "Добавить нового пользователя",
                         "Посмотреть всех пользователей группы", "Посмотреть все группы, в которых состоит пользователь","Удалить пользователя"})
-        .AddChoiceGroup("Демонстрация работы", new[] { "Демонстрация работы планировщика", "Демонстрация работы межпроцессного взаимодействия" })
+        .AddChoiceGroup("Демонстрация работы", new[] { "Демонстрация работы планировщика(относительные и статические приоритеты)", "Демонстрация работы планировщика(свопинг процессов)", "Демонстрация работы межпроцессного взаимодействия" })
         .AddChoiceGroup("Навигация и другое", new[] {
                         "Показать текущую директорию",
                         "Показать дерево директорий и файлов", "Список файлов директории", "Вернуться в корневую директорию",
@@ -175,7 +175,7 @@ while (true)
                 string dirNameToCopy = Console.ReadLine();
                 Console.WriteLine("Введите путь для копируемой директории:");
                 string newFullDirPathToCopy = Console.ReadLine();
-                fileSystemController.CopyTo(dirNameToCopy, newFullDirPathToCopy);
+                fileSystemController.CopyDirTo(dirNameToCopy, newFullDirPathToCopy);
                 break;
             case "Вывести список пользователей":
                 var userTable = new Table();
@@ -348,8 +348,26 @@ while (true)
                 InterProcessCommunication interProcessCommunication = new InterProcessCommunication();
                 interProcessCommunication.Start();
                 break;
-            case "Демонстрация работы планировщика":
+            case "Демонстрация работы планировщика(относительные и статические приоритеты)":
+                var scheduler = new Scheduler(quantum: 1, maxMemory: 10);
 
+                scheduler.AddProcess(new MyProcess { PID = 1, Name = "Process 1", ExecutionTime = 5, RemainingTime = 5, MemorySize = 3, Priority = ProcessPriority.High });
+                scheduler.AddProcess(new MyProcess { PID = 2, Name = "Process 2", ExecutionTime = 10, RemainingTime = 10, MemorySize = 4, Priority = ProcessPriority.Medium });
+                scheduler.AddProcess(new MyProcess { PID = 3, Name = "Process 3", ExecutionTime = 7, RemainingTime = 7, MemorySize = 2, Priority = ProcessPriority.Low });
+                scheduler.Run();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Все процессы были выполнены.");
+                Console.ResetColor();
+                break;
+            case "Демонстрация работы планировщика(свопинг процессов)":
+                int timeQuantum = 3;
+                int memorySize = 4;
+                Channel channel = new Channel();
+                SharedMemory sharedMemory = new SharedMemory();
+                ProcessScheduler schedulerSP = new ProcessScheduler(timeQuantum, memorySize, channel, sharedMemory);
+                schedulerSP.GenerateProcesses(10);
+                schedulerSP.Run();
+                schedulerSP.PrintCompletedProcesses();
                 break;
             default:
                 Console.WriteLine("Неизвестная команда!");

@@ -18,7 +18,6 @@ namespace FileSystemNTFS.BL.FileSystemOperation
         public MFTController MFTController { get; set; }
         public UserController UserController { get; set; }
         public GroupController GroupController { get; set; }
-        public Journal Journal { get; set; }
 
         public FileSystem()
         {                        

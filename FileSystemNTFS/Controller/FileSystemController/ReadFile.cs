@@ -22,8 +22,10 @@ namespace FileSystemNTFS.BL.Controller.FileSystemController
                         mftItem.Attributes.AccessFlags.O == AttributeFlags.Read ||
                         mftItem.Attributes.AccessFlags.O == AttributeFlags.Modify ||
                         mftItem.Attributes.AccessFlags.O == AttributeFlags.FullControl ||
-                        (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id && (mftItem.Attributes.AccessFlags.U == AttributeFlags.Read || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl)) ||
-                        (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.Read || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl)))
+                        (mftItem.Attributes.OwnerId == FileSystem.UserController.CurrentUser.Id && (mftItem.Attributes.AccessFlags.U == AttributeFlags.Read
+                        || mftItem.Attributes.AccessFlags.U == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.U == AttributeFlags.FullControl)) ||
+                        (mftItem.Attributes.Groups.Any(FileSystem.UserController.CurrentUser.Groups.Contains) && (mftItem.Attributes.AccessFlags.G == AttributeFlags.Read
+                        || mftItem.Attributes.AccessFlags.G == AttributeFlags.Modify || mftItem.Attributes.AccessFlags.G == AttributeFlags.FullControl)))
             {
 
                 string data = "";
